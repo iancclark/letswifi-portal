@@ -111,7 +111,11 @@ class DatabaseStorage
 	protected function getEntriesFromTableWhere( string $table, array $where ): array
 	{
 		static::safeString( $table, 'SQL table' );
-		$query = "SELECT * FROM `{$table}`";
+                if($this->pod->getAttibute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+		        $query = "SELECT * FROM \"{$table}\"";
+		} else {
+                        $query = "SELECT * FROM `{$table}`";
+                }
 		$first = true;
 		$bind = [];
 		foreach ( $where as $key => $value ) {
@@ -126,18 +130,31 @@ class DatabaseStorage
 			$query .= $first ? ' WHERE ' : ' AND ';
 			$first = false;
 
-			switch ( $key ) {
-				case 'issued': $query .= '`issued` < :issued';
+                        if($this->pdo->getAttibute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+                                switch ( $key ) {
+                                        case 'issued': $query .= '"issued" < :issued';
 
-					break;
-				case 'expires': $query .= '(`expires` > :expires OR `expires` IS NULL)';
+                                                break;
+                                        case 'expires': $query .= '("expires" > :expires OR "expires" IS NULL)';
 
-					break;
+                                                break;
 
-				default: $query .= \is_array( $value )
-					? "`{$key}` IN (:" . $key . \implode( ",:{$key}", \array_keys( $value ) ) . ')'
-					: "`{$key}` = :{$key}";
-			}
+                                        default: $query .= \is_array( $value )
+                                                ? "\"{$key}\" IN (:" . $key . \implode( ",:{$key}", \array_keys( $value ) ) . ')'
+                                                : "\"{$key}\" = :{$key}";
+                                }
+                        } else {
+                                switch ( $key ) {
+                                        case 'issued': $query .= '`issued` < :issued';
+                                                break;
+                                        case 'expires': $query .= '(`expires` > :expires OR `expires` IS NULL)';
+                                                break;
+
+                                        default: $query .= \is_array( $value )
+                                                ? "`{$key}` IN (:" . $key . \implode( ",:{$key}", \array_keys( $value ) ) . ')'
+                                                : "`{$key}` = :{$key}";
+                                }
+                        }
 		}
 
 		$this->pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );

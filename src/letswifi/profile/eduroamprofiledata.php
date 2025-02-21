@@ -13,6 +13,7 @@ namespace letswifi\profile;
 use letswifi\profile\network\HS20Network;
 use letswifi\profile\network\Network;
 use letswifi\profile\network\SSIDNetwork;
+use letswifi\profile\network\IKENetwork;
 
 class EduroamProfileData extends AbstractProfileData
 {

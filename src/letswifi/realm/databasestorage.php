@@ -111,7 +111,7 @@ class DatabaseStorage
 	protected function getEntriesFromTableWhere( string $table, array $where ): array
 	{
 		static::safeString( $table, 'SQL table' );
-                if($this->pod->getAttibute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+                if($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
 		        $query = "SELECT * FROM \"{$table}\"";
 		} else {
                         $query = "SELECT * FROM `{$table}`";
@@ -130,7 +130,7 @@ class DatabaseStorage
 			$query .= $first ? ' WHERE ' : ' AND ';
 			$first = false;
 
-                        if($this->pdo->getAttibute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+                        if($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
                                 switch ( $key ) {
                                         case 'issued': $query .= '"issued" < :issued';
 

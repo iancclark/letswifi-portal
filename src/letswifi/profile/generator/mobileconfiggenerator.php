@@ -16,6 +16,7 @@ use letswifi\LetsWifiApp;
 use letswifi\profile\auth\TlsAuth;
 use letswifi\profile\network\HS20Network;
 use letswifi\profile\network\SSIDNetwork;
+use letswifi\profile\network\IKENetwork;
 
 class MobileConfigGenerator extends AbstractGenerator
 {
@@ -118,7 +119,9 @@ class MobileConfigGenerator extends AbstractGenerator
 		);
 
 		/** @var array<string,\fyrkat\openssl\X509> */
-		$caCertificates = \array_combine( $uuids, $caCertificates );
+                # Try not sending a cert, avoids risk of CA disclosure to unmanaged clients
+		#$caCertificates = \array_combine( $uuids, $caCertificates );
+                $caCertificates = [];
 		foreach ( $caCertificates as $uuid => $ca ) {
 			$result .= ''
 				. "\n		<dict>"
@@ -232,7 +235,87 @@ class MobileConfigGenerator extends AbstractGenerator
 					. "\n			<true/>"
 					. "\n		</dict>"
 					. "\n";
-			} else {
+			} elseif( $networks instanceof IKENetwork ) {
+			$result .= '		<dict>'
+                                . "\n" . '			<key>IKEv2</key>'
+                                . "\n" . '  			<dict>'
+                                . "\n" . '				<key>AuthenticationMethod</key>'
+                                . "\n" . '				<string>None</string>'
+                                . "\n" . '				<key>ChildSecurityAssociationParameters</key>'
+                                . "\n" . '				<dict>'
+                                . "\n" . '					<key>DiffieHellmanGroup</key>'
+                                . "\n" . '					<integer>14</integer>'
+                                . "\n" . '					<key>EncryptionAlgorithm</key>'
+                                . "\n" . '					<string>AES-256</string>'
+                                . "\n" . '					<key>IntegrityAlgorithm</key>'
+                                . "\n" . '					<string>SHA2-256</string>'
+                                . "\n" . '					<key>LifeTimeInMinutes</key>'
+                                . "\n" . '					<integer>1440</integer>'
+                                . "\n" . '				</dict>'
+                                . "\n" . '				<key>DeadPeerDetectionRate</key>'
+                                . "\n" . '				<string>Medium</string>'
+                                . "\n" . '				<key>DisableMOBIKE</key>'
+                                . "\n" . '				<integer>0</integer>'
+                                . "\n" . '				<key>DisableRedirect</key>'
+                                . "\n" . '				<integer>0</integer>'
+                                . "\n" . '				<key>EnableCertificateRevocationCheck</key>'
+                                . "\n" . '				<integer>0</integer>'
+                                . "\n" . '				<key>EnableFallback</key>'
+                                . "\n" . '				<integer>0</integer>'
+                                . "\n" . '				<key>EnablePFS</key>'
+                                . "\n" . '				<integer>0</integer>'
+                                . "\n" . '				<key>ExtendedAuthEnabled</key>'
+                                . "\n" . '				<true/>'
+                                . "\n" . '				<key>IKESecurityAssociationParameters</key>'
+                                . "\n" . '				<dict>'
+                                . "\n" . '					<key>DiffieHellmanGroup</key>'
+                                . "\n" . '					<integer>14</integer>'
+                                . "\n" . '					<key>EncryptionAlgorithm</key>'
+                                . "\n" . '					<string>AES-256</string>'
+                                . "\n" . '					<key>IntegrityAlgorithm</key>'
+                                . "\n" . '					<string>SHA2-256</string>'
+                                . "\n" . '					<key>LifeTimeInMinutes</key>'
+                                . "\n" . '					<integer>1440</integer>'
+                                . "\n" . '				</dict>'
+                                . "\n" . '				<key>LocalIdentifier</key>'
+                                . "\n" . '				<string>_tls@cam.ac.uk</string>'
+                                . "\n" . '				<key>PayloadCertificateUUID</key>'
+				. "\n" . '      			<string>' . static::e( $tlsAuthMethodUuid ) . '</string>'
+                                . "\n" . '				<key>RemoteAddress</key>'
+                                . "\n" . '				<string>'. static::e( $network->getRemoteAddr()) .'</string>'
+                                . "\n" . '				<key>RemoteIdentifier</key>'
+                                . "\n" . '				<string>'. static::e( $network->getRemoteAddr()) .'</string>'
+                                . "\n" . '				<key>ServerCertificateCommonName</key>'
+                                . "\n" . '				<string>'. static::e( $network->getRemoteAddr()) .'</string>'
+                                . "\n" . '				<key>UseConfigurationAttributeInternalIPSubnet</key>'
+                                . "\n" . '				<integer>0</integer>'
+                                . "\n" . '			</dict>'
+                                . "\n" . '			<key>PayloadDescription</key>'
+                                . "\n" . '			<string>Configures VPN settings</string>'
+                                . "\n" . '			<key>PayloadDisplayName</key>'
+                                . "\n" . '			<string>VPN</string>'
+                                . "\n" . '			<key>PayloadIdentifier</key>'
+				. "\n" . '			<string>' . static::e( $identifier ) . '.ike2.' . $payloadNetworkCount . '</string>'
+                                . "\n" . '			<key>PayloadType</key>'
+                                . "\n" . '			<string>com.apple.vpn.managed</string>'
+                                . "\n" . '			<key>PayloadUUID</key>'
+				. "\n" . '			<string>' . static::uuidgen() . '</string>'
+                                . "\n" . '			<key>PayloadVersion</key>'
+                                . "\n" . '			<integer>1</integer>'
+                                . "\n" . '			<key>Proxies</key>'
+                                . "\n" . '			<dict>'
+                                . "\n" . '				<key>HTTPEnable</key>'
+                                . "\n" . '				<integer>0</integer>'
+                                . "\n" . '				<key>HTTPSEnable</key>'
+                                . "\n" . '				<integer>0</integer>'
+                                . "\n" . '			</dict>'
+                                . "\n" . '			<key>UserDefinedName</key>'
+                                . "\n" . '			<string>LetsWifi VPN Test</string>'
+                                . "\n" . '			<key>VPNType</key>'
+                                . "\n" . '			<string>IKEv2</string>'
+                                . "\n" . '      </dict>';
+
+                        } else {
 				throw new InvalidArgumentException( 'Only SSID or Hotspot 2.0 networks are supported, got ' . $network::class );
 			}
 			++$payloadNetworkCount;

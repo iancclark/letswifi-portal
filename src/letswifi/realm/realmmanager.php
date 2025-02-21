@@ -251,7 +251,11 @@ class RealmManager extends DatabaseStorage
 	 */
 	public function revokeUser( string $realm, string $userId ): void
 	{
-		$statement = $this->pdo->prepare( 'UPDATE `realm_signing_log` SET `revoked` = :revoked WHERE `realm` = :realm AND `requester` = :requester AND `usage` = :usage AND `revoked` IS NULL AND `expires` > :expires' );
+                if($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+                        $statement = $this->pdo->prepare( 'UPDATE "realm_signing_log" SET "revoked" = :revoked WHERE "realm" = :realm AND "requester" = :requester AND "usage" = :usage AND "revoked` IS NULL AND "expires" > :expires' );
+                } else {
+                        $statement = $this->pdo->prepare( 'UPDATE `realm_signing_log` SET `revoked` = :revoked WHERE `realm` = :realm AND `requester` = :requester AND `usage` = :usage AND `revoked` IS NULL AND `expires` > :expires' );
+                }
 		$statement->bindValue( 'revoked', \gmdate( static::DATE_FORMAT ), PDO::PARAM_STR );
 		$statement->bindValue( 'realm', $realm, PDO::PARAM_STR );
 		$statement->bindValue( 'requester', $userId, PDO::PARAM_STR );
@@ -269,7 +273,11 @@ class RealmManager extends DatabaseStorage
 	 */
 	public function revokeSubject( string $realm, string $subject ): void
 	{
-		$statement = $this->pdo->prepare( 'UPDATE `realm_signing_log` SET `revoked` = :revoked WHERE `realm` = :realm AND `sub` = :subject AND `usage` = :usage AND `revoked` IS NULL AND `expires` > :expires' );
+                if($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+		        $statement = $this->pdo->prepare( 'UPDATE "realm_signing_log" SET "revoked" = :revoked WHERE "realm" = :realm AND "sub" = :subject AND "usage" = :usage AND "revoked" IS NULL AND "expires" > :expires' );
+                } else {
+		        $statement = $this->pdo->prepare( 'UPDATE `realm_signing_log` SET `revoked` = :revoked WHERE `realm` = :realm AND `sub` = :subject AND `usage` = :usage AND `revoked` IS NULL AND `expires` > :expires' );
+                }
 		$statement->bindValue( 'revoked', \gmdate( static::DATE_FORMAT ), PDO::PARAM_STR );
 		$statement->bindValue( 'realm', $realm, PDO::PARAM_STR );
 		$statement->bindValue( 'subject', $subject, PDO::PARAM_STR );
@@ -291,7 +299,11 @@ class RealmManager extends DatabaseStorage
 	public function logPreparedCredential( string $realm, X509 $caCert, User $requester, CSR $csr, DateTimeInterface $expiry, string $usage ): int
 	{
 		$csrData = $csr->getCSRPem();
-		$statement = $this->pdo->prepare( 'INSERT INTO `realm_signing_log` (`realm`, `ca_sub`, `requester`, `usage`, `sub`, `issued`, `expires`, `csr`, `client`, `user_agent`, `ip`) VALUES (:realm, :ca_sub, :requester, :usage, :sub, :issued, :expires, :csr, :client, :user_agent, :ip)' );
+                if($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+		        $statement = $this->pdo->prepare( 'INSERT INTO "realm_signing_log" ("realm", "ca_sub", "requester", "usage", "sub", "issued", "expires", "csr", "client", "user_agent", "ip") VALUES (:realm, :ca_sub, :requester, :usage, :sub, :issued, :expires, :csr, :client, :user_agent, :ip)' );
+                } else {
+		        $statement = $this->pdo->prepare( 'INSERT INTO `realm_signing_log` (`realm`, `ca_sub`, `requester`, `usage`, `sub`, `issued`, `expires`, `csr`, `client`, `user_agent`, `ip`) VALUES (:realm, :ca_sub, :requester, :usage, :sub, :issued, :expires, :csr, :client, :user_agent, :ip)' );
+                }
 		$statement->bindValue( 'realm', $realm, PDO::PARAM_STR );
 		$statement->bindValue( 'ca_sub', $caCert->getSubject(), PDO::PARAM_STR );
 		$statement->bindValue( 'requester', $requester->getUserID(), PDO::PARAM_STR );
@@ -304,7 +316,11 @@ class RealmManager extends DatabaseStorage
 		$statement->bindValue( 'user_agent', $requester->getUserAgent(), PDO::PARAM_STR );
 		$statement->bindValue( 'ip', $requester->getIP(), PDO::PARAM_STR );
 		$statement->execute();
-		$last = $this->pdo->lastInsertId();
+                if($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+		        $last = $this->pdo->lastInsertId("realm_signing_log_serial_seq");
+                } else {
+		        $last = $this->pdo->lastInsertId();
+                }
 		$lastId = (int)$last;
 		if ( 0 < $lastId && (string)$lastId === $last ) {
 			return $lastId;
@@ -321,7 +337,11 @@ class RealmManager extends DatabaseStorage
 	 */
 	public function logCompletedCredential( string $realm, User $user, X509 $userCert, string $usage ): void
 	{
-		$statement = $this->pdo->prepare( 'UPDATE `realm_signing_log` SET `issued` = :issued, `expires` = :expires, `x509` = :x509 WHERE `serial` = :serial AND `realm` = :realm AND `requester` = :requester AND `usage` = :usage AND `ca_sub` = :ca_sub' );
+                if($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+		        $statement = $this->pdo->prepare( 'UPDATE "realm_signing_log" SET "issued" = :issued, "expires" = :expires, "x509" = :x509 WHERE "serial" = :serial AND "realm" = :realm AND "requester" = :requester AND "usage" = :usage AND "ca_sub" = :ca_sub' );
+                } else {
+		        $statement = $this->pdo->prepare( 'UPDATE `realm_signing_log` SET `issued` = :issued, `expires` = :expires, `x509` = :x509 WHERE `serial` = :serial AND `realm` = :realm AND `requester` = :requester AND `usage` = :usage AND `ca_sub` = :ca_sub' );
+                }
 		$statement->bindValue( 'issued', \gmdate( static::DATE_FORMAT, $userCert->getValidFrom()->getTimestamp() ), PDO::PARAM_STR );
 		$statement->bindValue( 'expires', \gmdate( static::DATE_FORMAT, $userCert->getValidTo()->getTimestamp() ), PDO::PARAM_STR );
 		$statement->bindValue( 'x509', $userCert->getX509Pem(), PDO::PARAM_STR );
@@ -342,7 +362,11 @@ class RealmManager extends DatabaseStorage
 	 */
 	public function createRealm( string $realm ): void
 	{
-		$statement = $this->pdo->prepare( 'INSERT INTO `realm` (`realm`) VALUES (:realm)' );
+                if($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+		        $statement = $this->pdo->prepare( 'INSERT INTO "realm" ("realm") VALUES (:realm)' );
+                } else {
+		        $statement = $this->pdo->prepare( 'INSERT INTO `realm` (`realm`) VALUES (:realm)' );
+                }
 		$statement->bindValue( 'realm', $realm );
 		$statement->execute();
 
@@ -360,11 +384,20 @@ class RealmManager extends DatabaseStorage
 		}
 		$this->pdo->beginTransaction();
 
-		$statement1 = $this->pdo->prepare( 'UPDATE `realm_key` SET `expires` = :expires WHERE `realm` = :realm AND `expires` IS NULL' );
+                if($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+		        $statement1 = $this->pdo->prepare( 'UPDATE "realm_key" SET "expires" = :expires WHERE "realm" = :realm AND "expires" IS NULL' );
+                } else {
+		        $statement1 = $this->pdo->prepare( 'UPDATE `realm_key` SET `expires` = :expires WHERE `realm` = :realm AND `expires` IS NULL' );
+                }
+
 		$statement1->bindValue( 'realm', $realm );
 		$statement1->bindValue( 'expires', $now + $grace );
 
-		$statement2 = $this->pdo->prepare( 'INSERT INTO `realm_key` (`realm`, `key`, `issued`) VALUES (:realm, :key, :issued)' );
+                if($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+		        $statement2 = $this->pdo->prepare( 'INSERT INTO "realm_key" ("realm", "key", "issued") VALUES (:realm, :key, :issued)' );
+                } else {
+		        $statement2 = $this->pdo->prepare( 'INSERT INTO `realm_key` (`realm`, `key`, `issued`) VALUES (:realm, :key, :issued)' );
+                }
 		$statement2->bindValue( 'realm', $realm );
 		$statement2->bindValue( 'key', \base64_encode( \random_bytes( 32 ) ) );
 		$statement2->bindValue( 'issued', $now );
@@ -392,7 +425,11 @@ class RealmManager extends DatabaseStorage
 			}
 		}
 
-		$statement = $this->pdo->prepare( 'INSERT INTO `ca` (`sub`, `pub`, `key`, `issuer`) VALUES (:sub, :pub, :key, :issuer)' );
+                if($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+		        $statement = $this->pdo->prepare( 'INSERT INTO "ca" ("sub", "pub", "key", "issuer") VALUES (:sub, :pub, :key, :issuer)' );
+                } else {
+		        $statement = $this->pdo->prepare( 'INSERT INTO `ca` (`sub`, `pub`, `key`, `issuer`) VALUES (:sub, :pub, :key, :issuer)' );
+                }
 		$statement->bindValue( 'sub', $sub );
 		$statement->bindValue( 'pub', $x509->getX509Pem() );
 		$statement->bindValue( 'key', $privateKey ? $privateKey->getPrivateKeyPem( null ) : null );
@@ -409,7 +446,11 @@ class RealmManager extends DatabaseStorage
 			throw new InvalidArgumentException( "Attempted to trust CA {$sub}, but it is not known" );
 		}
 
-		$statement = $this->pdo->prepare( 'INSERT INTO `realm_trust` (`realm`, `trusted_ca_sub`) VALUES (:realm, :sub)' );
+                if($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+		        $statement = $this->pdo->prepare( 'INSERT INTO "realm_trust" ("realm", "trusted_ca_sub") VALUES (:realm, :sub)' );
+                } else {
+		        $statement = $this->pdo->prepare( 'INSERT INTO `realm_trust` (`realm`, `trusted_ca_sub`) VALUES (:realm, :sub)' );
+                }
 		$statement->bindValue( 'realm', $realm );
 		$statement->bindValue( 'sub', $sub );
 		$statement->execute();
@@ -420,7 +461,11 @@ class RealmManager extends DatabaseStorage
 	 */
 	public function removeTrustedCa( string $realm, string $sub ): void
 	{
-		$statement = $this->pdo->prepare( 'DELETE FROM `realm_trust` WHERE `realm` = :realm AND trusted_ca_sub = :sub' );
+                if($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+		        $statement = $this->pdo->prepare( 'DELETE FROM "realm_trust" WHERE "realm" = :realm AND "trusted_ca_sub" = :sub' );
+                } else {
+		        $statement = $this->pdo->prepare( 'DELETE FROM `realm_trust` WHERE `realm` = :realm AND trusted_ca_sub = :sub' );
+                }
 		$statement->bindValue( 'realm', $realm );
 		$statement->bindValue( 'sub', $sub );
 		$statement->execute();
@@ -438,7 +483,12 @@ class RealmManager extends DatabaseStorage
 		$epoch = new DateTimeImmutable( '@0' );
 		$validityDays = $epoch->add( $defaultValidity )->getTimestamp() / 86400;
 
-		$statement = $this->pdo->prepare( 'REPLACE INTO `realm_signer` (`realm`, `signer_ca_sub`, `default_validity_days`) VALUES (:realm, :sub, :validity_days)' );
+                if($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+		        $statement = $this->pdo->prepare( 'DELETE FROM "realm_signer" where "realm"=:realm' );
+		        $statement = $this->pdo->prepare( 'INSERT INTO "realm_signer" ("realm", "signer_ca_sub", "default_validity_days") VALUES (:realm, :sub, :validity_days)' );
+                } else {
+		        $statement = $this->pdo->prepare( 'REPLACE INTO `realm_signer` (`realm`, `signer_ca_sub`, `default_validity_days`) VALUES (:realm, :sub, :validity_days)' );
+                }
 		$statement->bindValue( 'realm', $realm );
 		$statement->bindValue( 'sub', $sub );
 		$statement->bindValue( 'validity_days', $validityDays );
@@ -450,7 +500,11 @@ class RealmManager extends DatabaseStorage
 	 */
 	public function addServer( string $realm, string $serverName ): void
 	{
-		$statement = $this->pdo->prepare( 'INSERT INTO `realm_server_name` (`realm`, `server_name`) VALUES (:realm, :server_name)' );
+                if($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+		        $statement = $this->pdo->prepare( 'INSERT INTO "realm_server_name" ("realm", "server_name") VALUES (:realm, :server_name)' );
+                } else {
+		        $statement = $this->pdo->prepare( 'INSERT INTO `realm_server_name` (`realm`, `server_name`) VALUES (:realm, :server_name)' );
+                }
 		$statement->bindValue( 'realm', $realm );
 		$statement->bindValue( 'server_name', $serverName );
 		$statement->execute();
@@ -461,7 +515,11 @@ class RealmManager extends DatabaseStorage
 	 */
 	public function removeServer( string $realm, string $serverName ): void
 	{
-		$statement = $this->pdo->prepare( 'DELETE FROM `realm_server_name` WHERE `realm` = :realm AND `server_name` = :server_name' );
+                if($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+		        $statement = $this->pdo->prepare( 'DELETE FROM "realm_server_name" WHERE "realm" = :realm AND "server_name" = :server_name' );
+                } else {
+		        $statement = $this->pdo->prepare( 'DELETE FROM `realm_server_name` WHERE `realm` = :realm AND `server_name` = :server_name' );
+                }
 		$statement->bindValue( 'realm', $realm );
 		$statement->bindValue( 'server_name', $serverName );
 		$statement->execute();
@@ -472,7 +530,11 @@ class RealmManager extends DatabaseStorage
 	 */
 	public function addVhost( string $realm, string $httpHost ): void
 	{
-		$statement = $this->pdo->prepare( 'INSERT INTO `realm_vhost` (`realm`, `server_name`) VALUES (:realm, :server_name)' );
+                if($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+		        $statement = $this->pdo->prepare( 'INSERT INTO "realm_vhost" ("realm", "server_name") VALUES (:realm, :server_name)' );
+                } else {
+		        $statement = $this->pdo->prepare( 'INSERT INTO `realm_vhost` (`realm`, `server_name`) VALUES (:realm, :server_name)' );
+                }
 		$statement->bindValue( 'realm', $realm );
 		$statement->bindValue( 'http_host', $httpHost );
 		$statement->execute();
@@ -483,7 +545,11 @@ class RealmManager extends DatabaseStorage
 	 */
 	public function removeVhost( string $realm, string $httpHost ): void
 	{
-		$statement = $this->pdo->prepare( 'DELETE FROM `realm_vhost` WHERE `realm` = :realm AND `http_host` = :httpHost' );
+                if($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+		        $statement = $this->pdo->prepare( 'DELETE FROM "realm_vhost" WHERE "realm" = :realm AND "http_host" = :httpHost' );
+                } else {
+		        $statement = $this->pdo->prepare( 'DELETE FROM `realm_vhost` WHERE `realm` = :realm AND `http_host` = :httpHost' );
+                }
 		$statement->bindValue( 'realm', $realm );
 		$statement->bindValue( 'http_host', $httpHost );
 		$statement->execute();

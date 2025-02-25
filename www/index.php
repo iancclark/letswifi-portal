@@ -26,5 +26,18 @@ $apiConfiguration = \is_string( $issuer ) ? [
 
 $app->render( [
 	'href' => "{$basePath}/",
+	'os_config' => [
+		'mobileconfig' => [
+			'url' => "{$basePath}/profiles/mac/",
+			'name' => 'macOS',
+		],
+		'onc' => [
+			'url' => "{$basePath}/profiles/onc/",
+			'name' => 'ChromeOS',
+		],
+	],
+	'manual' => [
+		'url' => "{$basePath}/profiles/new/",
+	],
 	'http://letswifi.app/api#v2' => $apiConfiguration,
 ], 'info', $basePath );

@@ -14,6 +14,7 @@ use letswifi\profile\network\HS20Network;
 use letswifi\profile\network\Network;
 use letswifi\profile\network\SSIDNetwork;
 use letswifi\profile\network\IKENetwork;
+use letswifi\profile\network\WiredNetwork;
 
 class CamProfileData extends AbstractProfileData
 {
@@ -31,6 +32,7 @@ class CamProfileData extends AbstractProfileData
 		#$result[] = new HS20Network( '001bc50460' );
 		$result[] = new SSIDNetwork( 'eduroam-testing' );
                 $result[] = new IKENetwork( 'vpn-test-fw.net.uis.cam.ac.uk');
+                $result[] = new WiredNetwork( 'default' );
 
 		return $result;
 	}

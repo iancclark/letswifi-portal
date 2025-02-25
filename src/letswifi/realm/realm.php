@@ -22,6 +22,7 @@ use fyrkat\openssl\PKCS12;
 use fyrkat\openssl\PrivateKey;
 use fyrkat\openssl\X509;
 use letswifi\profile\EduroamProfileData;
+use letswifi\profile\CamProfileData;
 use letswifi\profile\IProfileData;
 use letswifi\profile\auth\TlsAuth;
 use letswifi\profile\generator\Generator;
@@ -132,7 +133,7 @@ class Realm
 	public function getProfileData(): IProfileData
 	{
 		// TODO add helpdesk info, logo and such
-		return new EduroamProfileData( $this->getName() );
+		return new CamProfileData( $this->getName() );
 	}
 
 	public function getSigningCACertificate(): X509

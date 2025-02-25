@@ -316,7 +316,7 @@ class MobileConfigGenerator extends AbstractGenerator
                                 . "\n" . '      </dict>';
 
                         } else {
-				throw new InvalidArgumentException( 'Only SSID or Hotspot 2.0 networks are supported, got ' . $network::class );
+				throw new InvalidArgumentException( 'Only SSID, Hotspot 2.0, IKEv2 or wired networks are supported, got ' . $network::class );
 			}
 			++$payloadNetworkCount;
 		}

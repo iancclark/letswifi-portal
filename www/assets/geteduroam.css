@@ -10,7 +10,6 @@ html {
 }
 body:before {
 	display: block;
-	background-image: url('eduroam.svg');
 	background-repeat: no-repeat;
 	background-position: 50% 50%;
 	background-size: contain;

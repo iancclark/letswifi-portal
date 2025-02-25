@@ -4,10 +4,15 @@
 
 {% block content %}
 <main>
-	<h1>geteduroam<small>– Client certificate authentication made easy</small></h1>
-	<p>geteduroam's aim is to make eduroam client setup safer and easier.</p>
-	<p>We provide apps for different platforms, desktop and mobile, that can obtain and install eduroam certificates.</p>
-	<p>The apps also support <abbr title="Configuration Assistance Tool">CAT</abbr> profiles for users whose institutions do not support geteduroam yet. This means that everyone can use these apps right from the start.</p>
-
+	<h1>justeap<small>– Client certificate authentication made easy</small></h1>
+	<p>This system aims to streamline the provision of secure network access by issuing certificates and configuration files for various systems.</p>
+        <p>It is based on <a href="https://geteduroam.app">geteduroam</a>'s letswifi software</p>
+        <hr/>
+        <p>The following configs are available:</p>
+        <ul class="apps buttons devices">
+{% for id,conf in os_config %}
+                <li><a href="{{ conf.url }}" class="btn btn-default">{{ conf.name }}</a></li>
+{% endfor %}
+        <p class="apps"><a href="{{ manual.url }}" class="btn btn-default">You can also just download a certificate for manual configuration</a></p>
 </main>
 {% endblock %}

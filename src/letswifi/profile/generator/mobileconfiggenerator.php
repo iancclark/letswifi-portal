@@ -316,7 +316,11 @@ class MobileConfigGenerator extends AbstractGenerator
                                 . "\n" . '      </dict>';
 
 			} elseif( $network instanceof WiredNetwork ) {
+<<<<<<< Updated upstream
                                 $result .= '<dict>'
+=======
+                                $result .= '<dict>' .
+>>>>>>> Stashed changes
                                 . "\n" .'	<key>EAPClientConfiguration</key>'
                                 . "\n" .'       <dict>'
 				. "\n" .'               <key>AcceptEAPTypes</key>'
@@ -328,15 +332,24 @@ class MobileConfigGenerator extends AbstractGenerator
 					        $result .= '					<string>' . static::e( $serverName ) . '</string>'
 						        . "\n";
 				        }
+<<<<<<< Updated upstream
                                 $result .= '       </dict>' .
+=======
+			        $result .= '       </dict>'
+>>>>>>> Stashed changes
 			        . "\n" .'       <key>Interface</key>'
 			        . "\n" .'       <string>AnyEthernet</string>'
 			        . "\n" .'       <key>PayloadDisplayName</key>'
                                 . "\n" .'       <string>802.1X Ethernet: Global</string>'
                                 . "\n" .'       <key>PayloadIdentifier</key>'
 			        . "\n" .'       <string>' / static::e( $identifier ) . '.wired.' . $payloadNetworkCount . '</string>'
+<<<<<<< Updated upstream
                                 . "\n" .'       <key>PayloadType</key>'
 			        . "\n" .'       <string>com.apple.globalethernet.managed</string>' 
+=======
+                                . "\n" .'       <key>PayloadType</key>' 
+			        . "\n" .'       <string>com.apple.globalethernet.managed</string>'
+>>>>>>> Stashed changes
                                 . "\n" .'       <key>PayloadUUID</key>'
                                 . "\n" .'       <string>FB617606-203D-4B7C-90AB-2DF36BB3FEE9</string>'
                                 . "\n" .'       <key>PayloadVersion</key>' 

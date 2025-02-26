@@ -235,7 +235,7 @@ class MobileConfigGenerator extends AbstractGenerator
 					. "\n			<true/>"
 					. "\n		</dict>"
 					. "\n";
-			} elseif( $networks instanceof IKENetwork ) {
+			} elseif( $network instanceof IKENetwork ) {
 			$result .= '		<dict>'
                                 . "\n" . '			<key>IKEv2</key>'
                                 . "\n" . '  			<dict>'
@@ -315,8 +315,39 @@ class MobileConfigGenerator extends AbstractGenerator
                                 . "\n" . '			<string>IKEv2</string>'
                                 . "\n" . '      </dict>';
 
+			} elseif( $network instanceof WiredNetwork ) {
+                                $result .= '<dict>' .
+                                . "\n" .'	<key>EAPClientConfiguration</key>' .
+                                . "\n" .'       <dict>' .
+				. "\n" .'               <key>AcceptEAPTypes</key>' .
+				. "\n" .'               <array>' .
+	         		. "\n" .'                       <integer>13</integer>' .
+	        		. "\n" .'               </array>' .
+				. "\n" .'               <key>TLSTrustedServerNames</key>' .
+				        foreach ( $tlsAuthMethod->getServerNames() as $serverName ) {
+					        $result .= '					<string>' . static::e( $serverName ) . '</string>'
+						        . "\n";
+				        }
+			        . "\n" .'       </dict>' .
+			        . "\n" .'       <key>Interface</key>' .
+			        . "\n" .'       <string>AnyEthernet</string>' .
+			        . "\n" .'       <key>PayloadDisplayName</key>' .
+                                . "\n" .'       <string>802.1X Ethernet: Global</string>' .
+                                . "\n" .'       <key>PayloadIdentifier</key>' .
+			        . "\n" .'       <string>' / static::e( $identifier ) . '.wired.' . $payloadNetworkCount . '</string>' .
+                                . "\n" .'       <key>PayloadType</key>' .
+			        . "\n" .'       <string>com.apple.globalethernet.managed</string>' . 
+                                . "\n" .'       <key>PayloadUUID</key>' .
+                                . "\n" .'       <string>FB617606-203D-4B7C-90AB-2DF36BB3FEE9</string>' .
+                                . "\n" .'       <key>PayloadVersion</key>' . 
+                                . "\n" .'       <integer>1</integer>' .
+                                . "\n" .'       <key>SetupModes</key>' .
+                                . "\n" .'       <array>' . 
+                                . "\n" .'               <string>System</string>' .
+                                . "\n" .'       </array>' .
+                                . "\n" .'</dict>';
                         } else {
-				throw new InvalidArgumentException( 'Only SSID or Hotspot 2.0 networks are supported, got ' . $network::class );
+				throw new InvalidArgumentException( 'Only SSID, Hotspot 2.0, IKEv2 or wired networks are supported, got ' . $network::class );
 			}
 			++$payloadNetworkCount;
 		}

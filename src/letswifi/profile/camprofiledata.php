@@ -13,10 +13,12 @@ namespace letswifi\profile;
 use letswifi\profile\network\HS20Network;
 use letswifi\profile\network\Network;
 use letswifi\profile\network\SSIDNetwork;
+use letswifi\profile\network\IKENetwork;
+use letswifi\profile\network\WiredNetwork;
 
-class EduroamProfileData extends AbstractProfileData
+class CamProfileData extends AbstractProfileData
 {
-	public function __construct( string $realm, string $displayName = 'eduroam', array $data = [], string $languageCode = 'en' )
+	public function __construct( string $realm, string $displayName = 'Cambridge Network Settings', array $data = [], string $languageCode = 'en' )
 	{
 		parent::__construct( $realm, $displayName, $data, $languageCode );
 	}
@@ -27,8 +29,10 @@ class EduroamProfileData extends AbstractProfileData
 	public function getNetworks(): array
 	{
 		$result = parent::getNetworks();
-		$result[] = new HS20Network( '001bc50460' );
-		$result[] = new SSIDNetwork( 'eduroam' );
+		#$result[] = new HS20Network( '001bc50460' );
+		$result[] = new SSIDNetwork( 'eduroam-testing' );
+                $result[] = new IKENetwork( 'vpn-test-fw.net.uis.cam.ac.uk');
+                $result[] = new WiredNetwork( 'default' );
 
 		return $result;
 	}

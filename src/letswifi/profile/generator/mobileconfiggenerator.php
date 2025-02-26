@@ -17,6 +17,7 @@ use letswifi\profile\auth\TlsAuth;
 use letswifi\profile\network\HS20Network;
 use letswifi\profile\network\SSIDNetwork;
 use letswifi\profile\network\IKENetwork;
+use letswifi\profile\network\WiredNetwork;
 
 class MobileConfigGenerator extends AbstractGenerator
 {

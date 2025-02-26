@@ -335,7 +335,7 @@ class MobileConfigGenerator extends AbstractGenerator
 			        . "\n" .'       <key>PayloadDisplayName</key>'
                                 . "\n" .'       <string>802.1X Ethernet: Global</string>'
                                 . "\n" .'       <key>PayloadIdentifier</key>'
-			        . "\n" .'       <string>' / static::e( $identifier ) . '.wired.' . $payloadNetworkCount . '</string>'
+			        . "\n" .'       <string>' . static::e( $identifier ) . '.wired.' . $payloadNetworkCount . '</string>'
                                 . "\n" .'       <key>PayloadType</key>' 
 			        . "\n" .'       <string>com.apple.globalethernet.managed</string>'
                                 . "\n" .'       <key>PayloadUUID</key>'

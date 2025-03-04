@@ -316,7 +316,8 @@ class MobileConfigGenerator extends AbstractGenerator
                                 . "\n" . '			<string>IKEv2</string>'
                                 . "\n" . '      </dict>';
 
-			} elseif( $network instanceof WiredNetwork ) {
+			} elseif( $network instanceof WiredNetwork && false) {
+                                # This wired network profile breaks the network system prefs. More troubleshooting needed, later.
                                 $result .= '<dict>'
                                 . "\n" .'	<key>EAPClientConfiguration</key>'
                                 . "\n" .'       <dict>'

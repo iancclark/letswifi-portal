@@ -311,7 +311,7 @@ class MobileConfigGenerator extends AbstractGenerator
                                 . "\n" . '				<integer>0</integer>'
                                 . "\n" . '			</dict>'
                                 . "\n" . '			<key>UserDefinedName</key>'
-                                . "\n" . '			<string>LetsWifi VPN Test</string>'
+                                . "\n" . '			<string>'. static::e( $network->getName() ).'</string>'
                                 . "\n" . '			<key>VPNType</key>'
                                 . "\n" . '			<string>IKEv2</string>'
                                 . "\n" . '      </dict>';

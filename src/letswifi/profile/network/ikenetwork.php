@@ -14,14 +14,21 @@ class IKENetwork implements Network
 {
 	/** @var string */
 	private $remoteaddr;
+        private $name;
 
-	public function __construct( string $remoteaddr )
+	public function __construct( string $remoteaddr, string $name )
 	{
 		$this->remoteaddr = $remoteaddr;
+                $this->name = $name;
 	}
 
 	public function getRemoteAddr(): string
 	{
 		return $this->remoteaddr;
 	}
+
+        public function getName(): string
+        {
+                return $this->name;
+        }
 }

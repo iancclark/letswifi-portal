@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-require \implode( \DIRECTORY_SEPARATOR, [\dirname( __DIR__, 4 ), 'src', '_autoload.php'] );
+require \implode( \DIRECTORY_SEPARATOR, [\dirname( __DIR__, 2 ), 'src', '_autoload.php'] );
 $basePath = '../../..';
 
 $app = new letswifi\LetsWifiApp();
@@ -19,8 +19,8 @@ $realm = $app->getRealm();
 $user = $app->getUserFromBrowserSession( $realm );
 
 if ( $user ) {
-	$certificates = $realmManager->listUserCertificates( $realm->getName(), $user );
-	$queryVars = ['user' => $user];
+	$certificates = $realmManager->listUserCertificates( $realm->getName(), $user->getUserId() );
+	$queryVars = ['user' => $user->getUserId() ];
 } else {
 	\assert( false, 'No user, this should not be possible' );
 
@@ -33,7 +33,7 @@ $app->render( [
 	// TSV seems like fun, but it looks like empty columns disappear
 	// 'jq' => '.certificates[] | [.serial, .requester, .sub, .issued, .expires, .revoked, .usage, .client] | @tsv',
 	'certificates' => $certificates,
-	'user' => ['name' => $user],
+	'user' => ['name' => $user->getUserId() ],
 	'form' => [
 		'realm' => $realm->getName(),
                 // TODO: need a user specific revoke 

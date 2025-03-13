@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-require \implode( \DIRECTORY_SEPARATOR, [\dirname( __DIR__, 4 ), 'src', '_autoload.php'] );
+require \implode( \DIRECTORY_SEPARATOR, [\dirname( __DIR__, 3 ), 'src', '_autoload.php'] );
 
 $app = new letswifi\LetsWifiApp();
 $app->registerExceptionHandler();
@@ -28,7 +28,7 @@ $realmManager = $app->getRealmManager();
 if ( \array_key_exists( 'subject', $_POST ) && \is_string( $_POST['subject'] ) ) {
         $cert = $realmManager->getCertificate( $realm->getName(), $_POST['subject'] )
 
-        if ( $cert['requester'] === $user ) {
+        if ( $cert['requester'] === $user->getUserId() ) {
 	        $realmManager->revokeSubject( $realm->getName(), $_POST['subject'] );
         } else {
                 \header( 'Content-Type: text/plain', true, 404 );

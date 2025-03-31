@@ -26,7 +26,7 @@ if ( 'POST' !== $_SERVER['REQUEST_METHOD'] ) {
 $realmManager = $app->getRealmManager();
 
 if ( \array_key_exists( 'subject', $_POST ) && \is_string( $_POST['subject'] ) ) {
-        $cert = $realmManager->getCertificate( $realm->getName(), $_POST['subject'] )
+        $cert = $realmManager->getCertificate( $realm->getName(), $_POST['subject'] );
 
         if ( $cert['requester'] === $user->getUserId() ) {
 	        $realmManager->revokeSubject( $realm->getName(), $_POST['subject'] );

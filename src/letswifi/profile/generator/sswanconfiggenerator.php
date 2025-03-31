@@ -13,7 +13,7 @@ class SswanConfigGenerator extends AbstractGenerator
         public function generate(): string
         {
                 $uuid = static::uuidgen();
-                $id = \implode( '.', \array_reverse( \explode( '.' $this->profileData->getRealm() ) ) );
+                $id = \implode( '.', \array_reverse( \explode( '.', $this->profileData->getRealm() ) ) );
                 $caCerts = [];
                 $tlsAuthMethods = \array_filter(
                         $this->authenticationMethods,
@@ -65,5 +65,3 @@ class SswanConfigGenerator extends AbstractGenerator
                 return 'application/vnd.strongswan.profile';
         }
 }
-
-

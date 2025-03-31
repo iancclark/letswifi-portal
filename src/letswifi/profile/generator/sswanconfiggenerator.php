@@ -50,7 +50,7 @@ class SswanConfigGenerator extends AbstractGenerator
                                 "addr"=>$network->getRemoteAddr(),
                                 "id"=>$network->getRemoteAddr()),
                         "local"=>array(
-                                "p12"=>\base64_encode( $pkcs12->use3des()->getPKCS12Bytes('') )
+                                "p12"=>\base64_encode( $pkcs12->use3des()->getPKCS12Bytes( $this->passprhase ?: '' ) )
                         )
                 );
                 return \json_encode($sswan);

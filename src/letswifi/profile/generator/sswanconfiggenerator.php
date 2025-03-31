@@ -15,6 +15,7 @@ class SswanConfigGenerator extends AbstractGenerator
                 $uuid = static::uuidgen();
                 $id = \implode( '.', \array_reverse( \explode( '.', $this->profileData->getRealm() ) ) );
                 $caCerts = [];
+
                 $tlsAuthMethods = \array_filter(
                         $this->authenticationMethods,
                         static fn ($a) => $a instanceof TlsAuth && null !== $a->getPKCS12(),
@@ -29,17 +30,17 @@ class SswanConfigGenerator extends AbstractGenerator
                         $this->profileData->getNetworks(),
                         static fn ($a) => $a instanceof IKENetwork,
                 );
-                if (1 !== \count( $networks ) {
+                if (1 !== \count( $networks ) ) {
                         throw new InvalidArgumentException( 'Expected 1 IKE network, got ' . \count( $networks ) );
                 }
                 $network = \reset( $networks );
-                \assert( $networks instanceof IKENetwork );
+                \assert( $network instanceof IKENetwork );
 
                 if ( $pkcs12 = $tlsAuthMethod->getPKCS12() ) {
                         // Remove unnecssary cacert.
                         $pkcs12 = new PKCS12( $pkcs12->x509, $pkcs12->privateKey );
                 }
-                \assert( null !== $pkcs12 )
+                \assert( null !== $pkcs12 );
 
                 $sswan = array(
                         "uuid"=>$uuid,
@@ -49,7 +50,7 @@ class SswanConfigGenerator extends AbstractGenerator
                                 "addr"=>$network->getRemoteAddr(),
                                 "id"=>$network->getRemoteAddr()),
                         "local"=>array(
-                                "p12": \base64_encode( $pkcs12->getPKCS12Bytes() )
+                                "p12"=>\base64_encode( $pkcs12->use3des()->getPKCS12Bytes('') )
                         )
                 );
                 return \json_encode($sswan);

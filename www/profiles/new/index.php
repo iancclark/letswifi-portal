@@ -82,12 +82,12 @@ switch ( $overrideMethod ?? $_SERVER['REQUEST_METHOD'] ) {
 				'apple-mobileconfig' => [
 					'name' => 'Apple (iOS/MacOS)',
 				],
-				'eap-config' => [
+/*				'eap-config' => [
 					'name' => 'eap-config',
 				],
 				'google-onc' => [
 					'name' => 'ChromeOS',
-				],
+				], */
 				'pkcs12' => [
 					'name' => 'PKCS12',
 				],

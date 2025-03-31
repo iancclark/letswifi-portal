@@ -8,11 +8,6 @@
 	<p>This system aims to streamline the provision of secure network access by issuing certificates and configuration files for various systems.</p>
         <p>It is based on <a href="https://geteduroam.app">geteduroam</a>'s letswifi software</p>
         <hr/>
-        <p>The following configs are available:</p>
-        <ul class="apps buttons devices">
-{% for id,conf in os_config %}
-                <li><a href="{{ conf.url }}" class="btn btn-default">{{ conf.name }}</a></li>
-{% endfor %}
-        <p class="apps"><a href="{{ manual.url }}" class="btn btn-default">You can also just download a certificate for manual configuration</a></p>
+        <p class="apps"><a href="{{ manual.url }}" class="btn btn-default">Log in</a></p>
 </main>
 {% endblock %}

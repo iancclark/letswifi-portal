@@ -122,7 +122,7 @@ switch ( $overrideMethod ?? $_SERVER['REQUEST_METHOD'] ) {
 
 				break;
 
-                        case 'sswan': $generator = $realm->getConfigGenerator( letswifi\profile\generator\SswanConfigGeneator::class, $user, $passphrase);
+                        case 'sswan': $generator = $realm->getConfigGenerator( letswifi\profile\generator\SswanConfigGenerator::class, $user, $passphrase);
                         
                                 break;
 

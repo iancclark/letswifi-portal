@@ -28,7 +28,7 @@ if ( $user ) {
 }
 
 $app->render( [
-	'href' => "{$basePath}/admin/user/get/?" . \http_build_query( $queryVars ),
+	'href' => "{$basePath}/self/?" . \http_build_query( $queryVars ),
 	'jq' => '.certificates | map(del(.csr,.x509))',
 	// TSV seems like fun, but it looks like empty columns disappear
 	// 'jq' => '.certificates[] | [.serial, .requester, .sub, .issued, .expires, .revoked, .usage, .client] | @tsv',

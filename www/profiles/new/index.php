@@ -41,7 +41,7 @@ $user = $app->getUserFromBrowserSession( $realm );
 // the cookie is easily guessable, but why would a script do that?
 // It can just POST.
 if ( 'GET' === $_SERVER['REQUEST_METHOD'] && isset( $_GET['download'] ) ) {
-	foreach ( ['apple-mobileconfig', 'google-onc', 'pkcs12'] as $kind ) {
+	foreach ( ['apple-mobileconfig', 'google-onc', 'pkcs12', 'sswan'] as $kind ) {
 		// Ensure this request can only be served one time
 		// Does not affect the current $_COOKIE variable
 		\setcookie( "{$kind}-download-token", '', [
@@ -91,6 +91,9 @@ switch ( $overrideMethod ?? $_SERVER['REQUEST_METHOD'] ) {
 				'pkcs12' => [
 					'name' => 'PKCS12',
 				],
+                                'sswan' => [
+                                        'name' =>'strongSwan VPN',
+                                ],
 			],
 			'app' => [
 				'url' => "{$basePath}/app/",
@@ -118,6 +121,10 @@ switch ( $overrideMethod ?? $_SERVER['REQUEST_METHOD'] ) {
 			case 'google-onc': $generator = $realm->getConfigGenerator( letswifi\profile\generator\ONCGenerator::class, $user, $passphrase );
 
 				break;
+
+                        case 'sswan': $generator = $realm->getConfigGenerator( letswifi\profile\generator\SswanConfigGeneator::class, $user, $passphrase);
+                        
+                                break;
 
 			default:
 				\header( 'Content-Type: text/plain', true, 400 );

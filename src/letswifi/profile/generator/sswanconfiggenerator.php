@@ -30,9 +30,9 @@ class SswanConfigGenerator extends AbstractGenerator
                         static fn ($a) => $a instanceof IKENetwork,
                 );
                 if (1 !== \count( $networks ) {
-                        throw new InvalidArgumentException('Expected 1 IKE network, got ' . \count( $networks ) );
+                        throw new InvalidArgumentException( 'Expected 1 IKE network, got ' . \count( $networks ) );
                 }
-                $network = \reset( $networks )
+                $network = \reset( $networks );
                 \assert( $networks instanceof IKENetwork );
 
                 if ( $pkcs12 = $tlsAuthMethod->getPKCS12() ) {
